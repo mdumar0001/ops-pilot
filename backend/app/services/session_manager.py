@@ -2,11 +2,11 @@
 
 import uuid
 
-# Sab sessions store karne ke liye dictionary
+#  to store all sessions and their conversation history
 sessions = {}
 
 def get_or_create_session(session_id=None):
-    """give Session ID do, aif it is not there then create new session ID"""
+    """give Session ID do, if it is not there then create new session ID"""
     if not session_id:
         session_id = str(uuid.uuid4())
     

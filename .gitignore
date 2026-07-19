@@ -7,7 +7,7 @@ frontend/dist/
 frontend/.env
 frontend/.env.*
 frontend/.cache/
-
+node_modules/
 # =========================
 # FastAPI Backend
 # =========================

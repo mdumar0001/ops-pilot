@@ -9,7 +9,7 @@ router = APIRouter()
 async def list_documents():
     """Uploaded documents ki list"""
     
-    # Unique filenames nikaalo
+    # get unique filenames from metadata
     filenames = list(set([
         m.get('filename', 'unknown') for m in vector_store.metadata
     ]))

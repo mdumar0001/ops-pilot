@@ -9,7 +9,7 @@ class VectorStore:
         self.index = faiss.IndexFlatL2(384)
         self.chunks = []
         self.metadata = []
-        print("✅ Vector store initialized")
+        print(" Vector store initialized")
     
     def add_chunks(self, chunks):
         """ storing chunks into vector store"""
@@ -17,20 +17,22 @@ class VectorStore:
             return 0
         
         for chunk in chunks:
-            # Text ko vector mein convert karo
+            # convert text to vector using embedding model
             embedding = get_embedding(chunk["text"])
             
             # FAISS mein add karo
             self.index.add(np.array([embedding]).astype('float32'))
             
-            # Text aur metadata store karo
+            # storing text and metadata for retrieval
             self.chunks.append(chunk["text"])
             self.metadata.append(chunk["metadata"])
         
         print(f"✅ Added {len(chunks)} chunks")
         return len(chunks)
     
-    def search(self, query, k=3):
+    def search(self, query, k=5):
+        print(f"🔍 Searching for: {query}")
+        print(f"📊 Total chunks in index: {self.index.ntotal}")
         """Similar chunks search karna"""
         if self.index.ntotal == 0:
             return []
@@ -56,5 +58,5 @@ class VectorStore:
         
         return results
 
-# Global instance - sab jagah yahi use hoga
+# Global instance - this will be used across the application to store and retrieve vector embeddings
 vector_store = VectorStore()
