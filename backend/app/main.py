@@ -30,7 +30,7 @@ async def root():
         "name": "OpsPilot",
         "version": "1.0.0",
         "status": "running",
-        "chunks": vector_store.index.ntotal
+        "chunks": vector_store.total_chunks()
     }
 
 # to start server (optional)
