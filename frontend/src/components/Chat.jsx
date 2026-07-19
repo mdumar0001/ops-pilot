@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import { sendMessage, getSession } from "../services/api";
-import LoadingSpinner from "./LoadingSpinner";
 
 export default function Chat({ isReady, onNewMessage }) {
   const [messages, setMessages] = useState([]);
@@ -132,7 +131,28 @@ export default function Chat({ isReady, onNewMessage }) {
             </div>
           ))
         )}
-        {loading && <LoadingSpinner text="Thinking..." />}
+        {loading && (
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <span
+              style={{
+                display: "inline-block",
+                width: "16px",
+                height: "16px",
+                border: "2px solid #e5e7eb",
+                borderTop: "2px solid #2563eb",
+                borderRadius: "50%",
+                animation: "spin 0.8s linear infinite",
+              }}
+            />
+            <span>Thinking...</span>
+            <style>{`
+              @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+              }
+            `}</style>
+          </div>
+        )}
         {error && (
           <div
             style={{
