@@ -11,7 +11,8 @@
 #         self.metadata = []
 #         print(" Vector store initialized")
     
-#     def add_chunks(self, chunks):
+#     def add_chunks(self, chunks):git status
+
 #         """ storing chunks into vector store"""
 #         if not chunks:
 #             return 0
