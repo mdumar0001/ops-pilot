@@ -14,12 +14,12 @@ app = FastAPI(
 # CORS - to connect with frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # allow all origins for development; change in production
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
+print("✅ CORS middleware added")  # ✅ YE LINE ADD KARO
 # Routes register 
 app.include_router(router)
 
