@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { sendMessage, getSession } from "../services/api";
-import LoadingSpinner from "./LoadingSpinner.jsx";
+import LoadingSpinner from "./LoadingSpinner";
 
 export default function Chat({ isReady, onNewMessage }) {
   const [messages, setMessages] = useState([]);
