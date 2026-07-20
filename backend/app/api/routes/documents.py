@@ -17,5 +17,5 @@ async def list_documents():
     return {
         "documents": filenames,
         "count": len(filenames),
-        "total_chunks": vector_store.index.ntotal
+        "total_chunks": vector_store.total_chunks()
     }

@@ -14,12 +14,15 @@ app = FastAPI(
 # CORS - to connect with frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:5173",
+        "https://your-frontend.vercel.app",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-print("✅ CORS middleware added")  # ✅ YE LINE ADD KARO
+print("✅ CORS middleware added")
 # Routes register 
 app.include_router(router)
 
