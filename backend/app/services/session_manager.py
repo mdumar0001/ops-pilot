@@ -1,34 +1,48 @@
 
 
-import uuid
+# import uuid
 
-#  to store all sessions and their conversation history
-sessions = {}
+# #  to store all sessions and their conversation history
+# sessions = {}
 
-def get_or_create_session(session_id=None):
-    """give Session ID do, if it is not there then create new session ID"""
-    if not session_id:
-        session_id = str(uuid.uuid4())
+# def get_or_create_session(session_id=None):
+#     """give Session ID do, if it is not there then create new session ID"""
+#     if not session_id:
+#         session_id = str(uuid.uuid4())
     
-    if session_id not in sessions:
-        sessions[session_id] = []
+#     if session_id not in sessions:
+#         sessions[session_id] = []
     
-    return session_id
+#     return session_id
 
-def add_message(session_id, role, content):
-    """add mesdage to conversation history"""
-    if session_id not in sessions:
-        sessions[session_id] = []
+# def add_message(session_id, role, content):
+#     """add mesdage to conversation history"""
+#     if session_id not in sessions:
+#         sessions[session_id] = []
     
-    sessions[session_id].append({
-        "role": role,
-        "content": content
-    })
+#     sessions[session_id].append({
+#         "role": role,
+#         "content": content
+#     })
     
-    # keep only the last 10 messages (memory limit)
-    if len(sessions[session_id]) > 10:
-        sessions[session_id] = sessions[session_id][-10:]
+#     # keep only the last 10 messages (memory limit)
+#     if len(sessions[session_id]) > 10:
+#         sessions[session_id] = sessions[session_id][-10:]
 
-def get_history(session_id):
-    """give conversation history for a session"""
-    return sessions.get(session_id, [])
+# def get_history(session_id):
+#     """give conversation history for a session"""
+#     return sessions.get(session_id, [])
+class SessionManager:
+    def __init__(self):
+        self.active_documents: set[str] = set()
+
+    def register_document(self, filename: str):
+        self.active_documents.add(filename)
+
+    def get_loaded_documents(self) -> list[str]:
+        return list(self.active_documents)
+
+    def has_documents(self) -> bool:
+        return len(self.active_documents) > 0
+
+session_manager = SessionManager()

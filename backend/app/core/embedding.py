@@ -18,36 +18,51 @@
 
 
     # backend/app/core/embedding.py
+# from sentence_transformers import SentenceTransformer
+# import gc
+
+# class EmbeddingService:
+#     _instance = None
+#     _model = None
+    
+#     def __new__(cls):
+#         if cls._instance is None:
+#             cls._instance = super().__new__(cls)
+#         return cls._instance
+    
+#     def __init__(self):
+#         if not hasattr(self, 'initialized'):
+#             self.dimension = 384
+#             self.initialized = True
+#             print("✅ Embedding service initialized (model will load on first use)")
+    
+#     def _load_model(self):
+#         if self._model is None:
+#             print("🔄 Loading embedding model...")
+#             self._model = SentenceTransformer('all-MiniLM-L6-v2', device='cpu')
+#             self._model.eval()
+#             print("✅ Model loaded")
+#         return self._model
+    
+#     def encode(self, texts):
+#         model = self._load_model()
+#         embeddings = model.encode(texts, batch_size=8)
+#         gc.collect()
+#         return embeddings
+
+# embedding_service = EmbeddingService()
 from sentence_transformers import SentenceTransformer
-import gc
+from app.core.config import settings
 
 class EmbeddingService:
-    _instance = None
-    _model = None
-    
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-        return cls._instance
-    
     def __init__(self):
-        if not hasattr(self, 'initialized'):
-            self.dimension = 384
-            self.initialized = True
-            print("✅ Embedding service initialized (model will load on first use)")
-    
-    def _load_model(self):
-        if self._model is None:
-            print("🔄 Loading embedding model...")
-            self._model = SentenceTransformer('all-MiniLM-L6-v2', device='cpu')
-            self._model.eval()
-            print("✅ Model loaded")
-        return self._model
-    
-    def encode(self, texts):
-        model = self._load_model()
-        embeddings = model.encode(texts, batch_size=8)
-        gc.collect()
-        return embeddings
+        self.model = SentenceTransformer(settings.EMBEDDING_MODEL_NAME)
+
+    def embed_texts(self, texts: list[str]) -> list[list[float]]:
+        embeddings = self.model.encode(texts, show_progress_bar=False)
+        return embeddings.tolist()
+
+    def embed_query(self, query: str) -> list[float]:
+        return self.model.encode(query, show_progress_bar=False).tolist()
 
 embedding_service = EmbeddingService()

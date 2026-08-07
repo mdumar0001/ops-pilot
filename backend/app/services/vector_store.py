@@ -63,111 +63,153 @@
 # vector_store = VectorStore()
 
 # backend/app/services/vector_store.py
-import faiss
-import numpy as np
-import pickle
-import os
-import gc
-from typing import List, Dict
+# import faiss
+# import numpy as np
+# import pickle
+# import os
+# import gc
+# from typing import List, Dict
 
-class VectorStore:
+# class VectorStore:
+#     def __init__(self):
+#         self.dimension = 384
+#         self.persist_path = "data/faiss_index"
+#         self.index = None
+#         self.chunks = []
+#         self.metadata = []
+#         self._ensure_persist_dir()
+#         self._load_metadata_only()
+    
+#     def _ensure_persist_dir(self):
+#         if not os.path.exists(self.persist_path):
+#             os.makedirs(self.persist_path)
+    
+#     def _load_metadata_only(self):
+#         """Sirf metadata load karo (index baad mein)"""
+#         try:
+#             data_path = f"{self.persist_path}/data.pkl"
+#             if os.path.exists(data_path):
+#                 with open(data_path, 'rb') as f:
+#                     data = pickle.load(f)
+#                     self.chunks = data['chunks']
+#                     self.metadata = data['metadata']
+#                 print(f"✅ Loaded {len(self.chunks)} chunks metadata")
+#         except Exception as e:
+#             print(f"⚠️ Failed to load metadata: {e}")
+    
+#     def _get_index(self):
+#         if self.index is None:
+#             index_path = f"{self.persist_path}/index.faiss"
+#             if os.path.exists(index_path):
+#                 self.index = faiss.read_index(index_path)
+#                 print(f"✅ Index loaded ({self.index.ntotal} vectors)")
+#             else:
+#                 self.index = faiss.IndexFlatL2(self.dimension)
+#                 print("✅ New index created")
+#         return self.index
+    
+#     def add_chunks(self, chunks):
+#         if not chunks:
+#             return 0
+        
+#         from app.core.embedding import embedding_service
+#         texts = [c['text'] for c in chunks]
+#         embeddings = embedding_service.encode(texts)
+        
+#         index = self._get_index()
+#         for chunk, embedding in zip(chunks, embeddings):
+#             index.add(np.array([embedding]).astype('float32'))
+#             self.chunks.append(chunk['text'])
+#             self.metadata.append(chunk['metadata'])
+        
+#         self._save_to_disk()
+#         gc.collect()
+#         return len(chunks)
+    
+#     def search(self, query: str, k: int = 5):
+#         index = self._get_index()
+#         if index.ntotal == 0:
+#             return []
+        
+#         from app.core.embedding import embedding_service
+#         query_embedding = embedding_service.encode(query)
+        
+#         distances, indices = index.search(
+#             np.array([query_embedding]).astype('float32'),
+#             min(k, index.ntotal)
+#         )
+        
+#         results = []
+#         for i, idx in enumerate(indices[0]):
+#             if idx < len(self.chunks):
+#                 results.append({
+#                     'text': self.chunks[idx],
+#                     'metadata': self.metadata[idx],
+#                     'score': float(distances[0][i])
+#                 })
+#         return results
+    
+#     def _save_to_disk(self):
+#         try:
+#             index = self._get_index()
+#             faiss.write_index(index, f"{self.persist_path}/index.faiss")
+#             with open(f"{self.persist_path}/data.pkl", 'wb') as f:
+#                 pickle.dump({
+#                     'chunks': self.chunks,
+#                     'metadata': self.metadata
+#                 }, f)
+#             print(f"✅ Saved {len(self.chunks)} chunks")
+#         except Exception as e:
+#             print(f"⚠️ Failed to save: {e}")
+    
+#     def get_documents(self):
+#         return list(set(m.get('filename', 'unknown') for m in self.metadata))
+    
+#     def total_chunks(self):
+#         if self.index:
+#             return self.index.ntotal
+#         return 0
+
+# vector_store = VectorStore()
+import chromadb
+from app.core.embedding import embedding_service
+
+class VectorStoreService:
     def __init__(self):
-        self.dimension = 384
-        self.persist_path = "data/faiss_index"
-        self.index = None
-        self.chunks = []
-        self.metadata = []
-        self._ensure_persist_dir()
-        self._load_metadata_only()
-    
-    def _ensure_persist_dir(self):
-        if not os.path.exists(self.persist_path):
-            os.makedirs(self.persist_path)
-    
-    def _load_metadata_only(self):
-        """Sirf metadata load karo (index baad mein)"""
-        try:
-            data_path = f"{self.persist_path}/data.pkl"
-            if os.path.exists(data_path):
-                with open(data_path, 'rb') as f:
-                    data = pickle.load(f)
-                    self.chunks = data['chunks']
-                    self.metadata = data['metadata']
-                print(f"✅ Loaded {len(self.chunks)} chunks metadata")
-        except Exception as e:
-            print(f"⚠️ Failed to load metadata: {e}")
-    
-    def _get_index(self):
-        if self.index is None:
-            index_path = f"{self.persist_path}/index.faiss"
-            if os.path.exists(index_path):
-                self.index = faiss.read_index(index_path)
-                print(f"✅ Index loaded ({self.index.ntotal} vectors)")
-            else:
-                self.index = faiss.IndexFlatL2(self.dimension)
-                print("✅ New index created")
-        return self.index
-    
-    def add_chunks(self, chunks):
-        if not chunks:
-            return 0
-        
-        from app.core.embedding import embedding_service
-        texts = [c['text'] for c in chunks]
-        embeddings = embedding_service.encode(texts)
-        
-        index = self._get_index()
-        for chunk, embedding in zip(chunks, embeddings):
-            index.add(np.array([embedding]).astype('float32'))
-            self.chunks.append(chunk['text'])
-            self.metadata.append(chunk['metadata'])
-        
-        self._save_to_disk()
-        gc.collect()
-        return len(chunks)
-    
-    def search(self, query: str, k: int = 5):
-        index = self._get_index()
-        if index.ntotal == 0:
-            return []
-        
-        from app.core.embedding import embedding_service
-        query_embedding = embedding_service.encode(query)
-        
-        distances, indices = index.search(
-            np.array([query_embedding]).astype('float32'),
-            min(k, index.ntotal)
-        )
-        
-        results = []
-        for i, idx in enumerate(indices[0]):
-            if idx < len(self.chunks):
-                results.append({
-                    'text': self.chunks[idx],
-                    'metadata': self.metadata[idx],
-                    'score': float(distances[0][i])
-                })
-        return results
-    
-    def _save_to_disk(self):
-        try:
-            index = self._get_index()
-            faiss.write_index(index, f"{self.persist_path}/index.faiss")
-            with open(f"{self.persist_path}/data.pkl", 'wb') as f:
-                pickle.dump({
-                    'chunks': self.chunks,
-                    'metadata': self.metadata
-                }, f)
-            print(f"✅ Saved {len(self.chunks)} chunks")
-        except Exception as e:
-            print(f"⚠️ Failed to save: {e}")
-    
-    def get_documents(self):
-        return list(set(m.get('filename', 'unknown') for m in self.metadata))
-    
-    def total_chunks(self):
-        if self.index:
-            return self.index.ntotal
-        return 0
+        self.client = chromadb.Client()
+        self.collection = self.client.get_or_create_collection(name="opspilot_documents")
 
-vector_store = VectorStore()
+    def add_chunks(self, chunks: list[dict]):
+        if not chunks:
+            return
+            
+        texts = [c["content"] for c in chunks]
+        metadatas = [c["metadata"] for c in chunks]
+        ids = [f"{c['metadata']['source']}_p{c['metadata']['page']}_{i}" for i, c in enumerate(chunks)]
+        embeddings = embedding_service.embed_texts(texts)
+
+        self.collection.add(
+            documents=texts,
+            embeddings=embeddings,
+            metadatas=metadatas,
+            ids=ids
+        )
+
+    def search(self, query: str, top_k: int = 4) -> list[dict]:
+        query_embedding = embedding_service.embed_query(query)
+        results = self.collection.query(
+            query_embeddings=[query_embedding],
+            n_results=top_k
+        )
+
+        retrieved_docs = []
+        if results and results.get("documents"):
+            for doc, meta in zip(results["documents"][0], results["metadatas"][0]):
+                retrieved_docs.append({
+                    "content": doc,
+                    "source": meta["source"],
+                    "page": meta["page"]
+                })
+        return retrieved_docs
+
+vector_store_service = VectorStoreService()
