@@ -629,10 +629,8 @@
 //     </div>
 //   );
 // }
-
 import React, { useState, useRef, useEffect } from "react";
 import { sendQuestion } from "../services/api";
-import LoadingSpinner from "./LoadingSpinner";
 
 export default function Chat({ loadedDocuments }) {
   const [messages, setMessages] = useState([]);
@@ -780,8 +778,11 @@ export default function Chat({ loadedDocuments }) {
                 <path d="M2 10a8 8 0 0112.906-6.319l1.411-1.412a1 1 0 011.414 1.414l-1.412 1.411A8 8 0 112 10zm8-6a6 6 0 100 12 6 6 0 000-12z" />
               </svg>
             </div>
-            <div className="bg-slate-900 border border-slate-800 p-3.5 sm:p-4 rounded-2xl rounded-tl-none">
-              <LoadingSpinner label="Searching embeddings & generating answer..." />
+            <div className="bg-slate-900 border border-slate-800 p-3.5 sm:p-4 rounded-2xl rounded-tl-none flex items-center gap-2.5">
+              <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+              <span className="text-xs text-slate-400">
+                Searching embeddings & generating answer...
+              </span>
             </div>
           </div>
         )}
