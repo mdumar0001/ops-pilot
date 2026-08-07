@@ -213,7 +213,6 @@
 // }
 import React, { useState } from "react";
 import { uploadPDFs } from "../services/api";
-import LoadingSpinner from "./LoadingSpinner";
 
 export default function Upload({ onUploadSuccess }) {
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -296,7 +295,10 @@ export default function Upload({ onUploadSuccess }) {
         className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium py-2 rounded-lg transition disabled:opacity-50 cursor-pointer"
       >
         {loading ? (
-          <LoadingSpinner label="Extracting & Embedding..." />
+          <div className="flex items-center gap-2 text-xs text-blue-400">
+            <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            <span>Extracting & Embedding...</span>
+          </div>
         ) : (
           <>
             <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
