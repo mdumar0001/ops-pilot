@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
 
     # Add this line
-    GROQ_MODEL: str = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+    GROQ_MODEL: str = os.getenv("GROQ_MODEL", "penai/gpt-oss-120b")
 
     EMBEDDING_MODEL_NAME: str = os.getenv(
         "EMBEDDING_MODEL_NAME",
