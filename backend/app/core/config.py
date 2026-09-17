@@ -12,26 +12,61 @@
 #     CHUNK_OVERLAP = 100
 
 # config = Config()
+# import os
+# from pydantic_settings import BaseSettings
+
+
+# class Settings(BaseSettings):
+#     GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
+
+#     # Add this line
+#     GROQ_MODEL: str = os.getenv("GROQ_MODEL", "penai/gpt-oss-120b")
+
+#     EMBEDDING_MODEL_NAME: str = os.getenv(
+#         "EMBEDDING_MODEL_NAME",
+#         "sentence-transformers/all-MiniLM-L6-v2"
+#     )
+
+#     CHUNK_SIZE: int = int(os.getenv("CHUNK_SIZE", 800))
+#     CHUNK_OVERLAP: int = int(os.getenv("CHUNK_OVERLAP", 150))
+
+#     class Config:
+#         env_file = ".env"
+
+
+# settings = Settings()
 import os
 from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
 
-    # Add this line
-    GROQ_MODEL: str = os.getenv("GROQ_MODEL", "penai/gpt-oss-120b")
+    GEMINI_API_KEY: str = os.getenv(
+        "GEMINI_API_KEY",
+        ""
+    )
+
+    GEMINI_MODEL: str = os.getenv(
+        "GEMINI_MODEL",
+        "gemini-3.5-flash-lite"
+    )
 
     EMBEDDING_MODEL_NAME: str = os.getenv(
         "EMBEDDING_MODEL_NAME",
         "sentence-transformers/all-MiniLM-L6-v2"
     )
 
-    CHUNK_SIZE: int = int(os.getenv("CHUNK_SIZE", 800))
-    CHUNK_OVERLAP: int = int(os.getenv("CHUNK_OVERLAP", 150))
+    CHUNK_SIZE: int = int(
+        os.getenv("CHUNK_SIZE", 800)
+    )
+
+    CHUNK_OVERLAP: int = int(
+        os.getenv("CHUNK_OVERLAP", 150)
+    )
 
     class Config:
         env_file = ".env"
+        extra = "ignore"
 
 
 settings = Settings()

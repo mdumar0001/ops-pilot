@@ -58,6 +58,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+def read_root():
+
+    return {
+        "message": "Welcome to the Personel AI document Assistent!"
+    }
+
+
 # Attach Routers
 app.include_router(health.router, tags=["Health"])
 app.include_router(upload.router, tags=["Ingestion"])
